@@ -1,7 +1,12 @@
 <!-- views/partials/_header.ejs -->
 <h1>TinyApp</h1>
+<% if (username) { %>
+<h6>Welcome, <%= username + "!" %>
+<% } else { %>
 <form class="form-inline" action="/login" method="POST">
   <label for="username">Enter a Username:</label>
   <input class="form-control" type="text" name="username">
   <button type="submit" class="btn btn-primary">Submit</button>
+<% } %>
+<% } %>
 </form>
