@@ -12,7 +12,7 @@ function generateRandomString() {
     // Retrieve a random character from the 62-element array of allowable characters
     let index = Math.floor(Math.random() * 62);
     randomString += allowableCharacters[index];
-  }
+  } // make it generate a new one if that's already used!
   return randomString;
 }
 
