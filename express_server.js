@@ -73,10 +73,15 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${newShortURL}`); // Redirect to the page for the newly-generated short URL
 });
 
-// Receives username from header form
+// Receives username from header form and saves them to a cookie
 app.post("/login", (req, res) => {
-  console.log(req.body.username);
   res.cookie("username", req.body.username); // Saves the user's username to a username cookie
+  res.redirect('/urls');
+});
+
+// Logs out user and clears cookie
+app.post("/logout", (req, res) => {
+  res.clearCookie("username"); // Saves the user's username to a username cookie
   res.redirect('/urls');
 });
 
