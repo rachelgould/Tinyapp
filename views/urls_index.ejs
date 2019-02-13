@@ -13,7 +13,9 @@
   <h2>Shortened URLs</h2>
   <% for (var shortURL in urls) { %>
       <ul>
-        <li><b><%= shortURL %></b> will go to: <%= urls[shortURL] %> <form method="POST" action="<%= "/urls/"+shortURL+"/delete" %>"><button type="submit">Delete</button></form>
+        <li><b><%= shortURL %></b> will go to: <%= urls[shortURL] %>
+          <a href="/urls/<%= shortURL %>"><button type="button">Update</button></a>
+          <form method="POST" action="<%= "/urls/"+shortURL+"/delete" %>"><button type="submit">Delete</button></form>
         </li>
       </ul>
   <% } %>

@@ -21,15 +21,24 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+// Get raw JSON of the database
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.post("/urls/:shortUrl/delete", (req, res) => {
+// Delete :shortURL entry from database
+app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params[Object.keys(req.params)[0]]]; // Delete removes the specified shortURL property from the urlDatabase
-  res.redirect("/urls"); // After deletion, redirects back to the main URLs list
+  res.redirect("/urls"); // After updating, redirects back to the main URLs list
 });
 
+// Updates the long URL associated with :shortUrl
+app.post("/urls/:shortURL/", (req, res) => {
+  urlDatabase[req.params[Object.keys(req.params)[0]]] = req.body.longURL; // Updates the specified URL from the urlDatabase
+  res.redirect("/urls"); // After updating, redirects back to the main URLs list
+});
+
+// Redirects from the short link to the long URL associated with :shortURL in the database
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
@@ -40,23 +49,26 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+// Shows the edit page for :shortURL
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
 });
 
+// Shows all the URLs in the database
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase }; // This HAS to be in the form of an object, even if there's only 1 key
   res.render("urls_index", templateVars); // urls_index is the .ejs file that's being passed the templateVars object. EJS automatically looks in a views folder, and appends the .ejs extension to urls_index
 });
 
-
+// Adds the long URL to the database with an associated random short URL
 app.post("/urls", (req, res) => {
   let newShortURL = generateRandomString();
   urlDatabase[newShortURL] = [req.body.longURL]; // Adds it to our url database
   res.redirect(`/urls/${newShortURL}`); // Redirect to the page for the newly-generated short URL
 });
 
+// Boot up the server
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
 });
