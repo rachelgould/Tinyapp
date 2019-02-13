@@ -6,8 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./node_modules/.bin/nodemon -L express_server.js"
-  }
-}
   },
   "author": "Rachel Gould rachegould@gmail.com",
   "license": "ISC",
