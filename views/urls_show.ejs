@@ -9,12 +9,11 @@
   <title>TinyApp</title>
 </head>
 <body style="font-size:20px; padding:50px;">
-  <h1>Information for
-    <%= shortURL %>
-  </h1>
-  <h2>Long Version:</h2>
+  <% include ./partials/_header %>
+  <h2><%= shortURL %>
+  </h2>
+  <h5>Long Version:</h5>
   <p><%= longURL %></p>
-  <h2>Shorten More!</h2>
-  <a href="#">Click Here</a>
+  <h5><a href="#">Shorten More!</a></h5>
 </body>
 </html>

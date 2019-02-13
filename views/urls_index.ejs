@@ -9,14 +9,14 @@
   <title>TinyApp</title>
 </head>
 <body style="font-size:20px; padding:50px;">
-  <h1>Shortened URLs</h1>
+  <% include ./partials/_header %>
+  <h2>Shortened URLs</h2>
   <% for (var shortenedUrl in urls) { %>
       <ul>
-        <li><%= shortenedUrl %> will go to: <%= urls[shortenedUrl] %>
+        <li><b><%= shortenedUrl %></b> will go to: <%= urls[shortenedUrl] %>
         </li>
       </ul>
   <% } %>
-  <h2>Shorten More!</h2>
-  <a href="#">Click Here</a>
+  <h5><a href="#">Shorten More!</a></h5>
 </body>
 </html>
