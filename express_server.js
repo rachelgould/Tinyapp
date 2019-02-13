@@ -28,13 +28,13 @@ app.get("/urls.json", (req, res) => {
 
 // Delete :shortURL entry from database
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params[Object.keys(req.params)[0]]]; // Delete removes the specified shortURL property from the urlDatabase
+  delete urlDatabase[req.params.shortURL]; // Delete removes the specified shortURL property from the urlDatabase
   res.redirect("/urls"); // After updating, redirects back to the main URLs list
 });
 
 // Updates the long URL associated with :shortUrl
 app.post("/urls/:shortURL/", (req, res) => {
-  urlDatabase[req.params[Object.keys(req.params)[0]]] = req.body.longURL; // Updates the specified URL from the urlDatabase
+  urlDatabase[req.params.shortURL] = req.body.longURL; // Updates the specified URL from the urlDatabase
   res.redirect("/urls"); // After updating, redirects back to the main URLs list
 });
 
