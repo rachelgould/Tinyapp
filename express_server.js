@@ -25,6 +25,11 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+app.post("/urls/:shortUrl/delete", (req, res) => {
+  delete urlDatabase[req.params[Object.keys(req.params)[0]]]; // Delete removes the specified shortURL property from the urlDatabase
+  res.redirect("/urls"); // After deletion, redirects back to the main URLs list
+});
+
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
@@ -47,7 +52,6 @@ app.get("/urls", (req, res) => {
 
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
   let newShortURL = generateRandomString();
   urlDatabase[newShortURL] = [req.body.longURL]; // Adds it to our url database
   res.redirect(`/urls/${newShortURL}`); // Redirect to the page for the newly-generated short URL

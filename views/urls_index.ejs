@@ -11,9 +11,9 @@
 <body style="font-size:20px; padding:50px;">
   <% include ./partials/_header %>
   <h2>Shortened URLs</h2>
-  <% for (var shortenedUrl in urls) { %>
+  <% for (var shortURL in urls) { %>
       <ul>
-        <li><b><%= shortenedUrl %></b> will go to: <%= urls[shortenedUrl] %>
+        <li><b><%= shortURL %></b> will go to: <%= urls[shortURL] %> <form method="POST" action="<%= "/urls/"+shortURL+"/delete" %>"><button type="submit">Delete</button></form>
         </li>
       </ul>
   <% } %>
