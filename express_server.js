@@ -5,6 +5,16 @@ app.set("view engine", "ejs");
 const bodyParser = require("body-parser"); // Converts the request from a Buffer to something we can read
 app.use(bodyParser.urlencoded({extended: true}));
 
+function generateRandomString() {
+  let randomString = "";
+  const allowableCharacters = ('abcdefghijklmnopqrstuvwxyz' + 'abcdefghijklmnopqrstuvwxyz'.toUpperCase() + '1234567890').split('');
+  for (let i = 0; i < 6; i++) {
+    let index = Math.floor(Math.random() * 62);
+    randomString += allowableCharacters[index];
+  }
+  return randomString;
+}
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -35,6 +45,7 @@ app.get("/urls", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
+  urlDatabase[generateRandomString()] = [req.body.longURL]; // Adds it to our url database
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
