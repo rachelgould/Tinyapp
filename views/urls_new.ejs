@@ -6,17 +6,17 @@
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <title>All URLS | TinyApp</title>
+  <title>New URL | TinyApp</title>
 </head>
 <body style="font-size:20px; padding:50px;">
   <% include ./partials/_header %>
-  <h2>Shortened URLs</h2>
-  <% for (var shortenedUrl in urls) { %>
-      <ul>
-        <li><b><%= shortenedUrl %></b> will go to: <%= urls[shortenedUrl] %>
-        </li>
-      </ul>
-  <% } %>
-  <h5><a href="/urls/new">Shorten More!</a></h5>
+  <h2>Create Tiny URL</h2>
+  <form class="form-inline" action="/urls" method="POST">
+    <div class="form-group mb-2">
+      <label for="longURL">Enter a URL:</label>
+      <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
 </body>
 </html>
