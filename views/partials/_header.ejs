@@ -17,20 +17,13 @@
 
 <hr>
 
-<% if (username) { %>
+<% if (user) { %>
   <div class="beside">
-    <h6>Logged in as: <%= username %>
+    <h6>Logged in as: <%= user.email %>
     <form action="/logout" method="POST">
     <button type="submit" class="btn btn-primary" style="float: right;">Logout</button>
     </form>
     </h6>
   </div>
   <hr>
-<% } else { %>
-  <form class="form-inline" action="/login" method="POST">
-    <label for="username"><h6>Login:</h6></label>
-    <input class="form-control" type="text" name="username" placeholder="Enter a username">
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-<hr>
 <% } %>

@@ -34,12 +34,9 @@ function addNewUser(userEmail, userPassword) {
 // Checks if a given email is already in the users database
 function checkEmailExists(userEmail) {
   for (id in usersDatabase) {
-    console.log(`checking ${id} in ${JSON.stringify(usersDatabase)}`)
     if (usersDatabase[id]['email'] === userEmail) {
-      console.log(`checking ${usersDatabase[id]['email']} against ${userEmail} in the TRUE section`)
       return true;
     }
-    console.log(`checking ${usersDatabase[id]['email']} against ${userEmail} in the FALSE section`)
   }
   return false;
 }
@@ -97,21 +94,19 @@ app.get("/u/:shortURL", (req, res) => {
 
 // This needs to be above the route for /urls/:shortURL because it takes precedence, and otherwise Express will think new is a route parameter
 app.get("/urls/new", (req, res) => {
-  let templateVars = {
-    username: req.cookies["username"],
-  };
+  let templateVars = { user: getUserById(req.cookies.userId) };
   res.render("urls_new", templateVars);
 });
 
 // Shows the edit page for :shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: getUserById(req.cookies.userId) };
   res.render("urls_show", templateVars);
 });
 
 // Shows all the URLs in the database
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] }; // This HAS to be in the form of an object, even if there's only 1 key
+  let templateVars = { urls: urlDatabase, user: getUserById(req.cookies.userId) }; // This HAS to be in the form of an object, even if there's only 1 key
   res.render("urls_index", templateVars); // urls_index is the .ejs file that's being passed the templateVars object. EJS automatically looks in a views folder, and appends the .ejs extension to urls_index
 });
 
@@ -122,21 +117,21 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${newShortURL}`); // Redirect to the page for the newly-generated short URL
 });
 
-// Receives username from header form and saves them to a cookie
+// Receives userId from header form and saves them to a cookie
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username); // Saves the user's username to a username cookie
+  res.cookie("userId", req.body.userId); //FIX THIS
   res.redirect('/urls');
 });
 
 // Logs out user and clears cookie
 app.post("/logout", (req, res) => {
-  res.clearCookie("username"); // Saves the user's username to a username cookie
+  res.clearCookie("userId"); // Saves the user's userId to a userId cookie
   res.redirect('/urls');
 });
 
 // Shows registration page
 app.get("/register", (req, res) => {
-  let templateVars = { username: req.cookies.username };
+  let templateVars = { user: getUserById(req.cookies.userId) };
   res.render("register", templateVars);
 });
 
