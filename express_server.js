@@ -52,6 +52,11 @@ function checkIdExists(userId) {
   return false;
 }
 
+// Get user object by user ID
+function getUserById(userId) {
+  return usersDatabase[userId];
+}
+
 // Database of URLs
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -141,14 +146,14 @@ app.post("/register", (req, res) => {
   let password = req.body.password;
   if (email === "" || password === "") {
     res.status(400).send('Error! You need to enter values for email and password.');
-  }
-  if (checkEmailExists(email)) {
+  } else if (checkEmailExists(email)) {
     res.status(400).send('Error! This email already has an account. Try another one.');
+  } else {
+    let userId = addNewUser(email, password);
+    // Set up user ID cookie
+    res.cookie("userId", userId);
+    res.redirect("/");
   }
-  let userId = addNewUser(email, password);
-  // Set up user ID cookie
-  res.cookie("userId", userId);
-  res.redirect("/");
 });
 
 app.get("/", (req, res) => {
