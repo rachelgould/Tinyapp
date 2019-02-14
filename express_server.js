@@ -7,6 +7,11 @@ const bodyParser = require("body-parser"); // Converts the request from a Buffer
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+/////////////////////////////////////////////////////////////
+// HELPER FUNCTIONS -----------------------------------------
+/////////////////////////////////////////////////////////////
+
+// Used to generate random string for User IDs and short URLs
 function generateRandomString() {
   let randomString = "";
   const allowableCharacters = ('abcdefghijklmnopqrstuvwxyz' + 'abcdefghijklmnopqrstuvwxyz'.toUpperCase() + '1234567890').split('');
@@ -14,13 +19,15 @@ function generateRandomString() {
     // Retrieve a random character from the 62-element array of allowable characters
     let index = Math.floor(Math.random() * 62);
     randomString += allowableCharacters[index];
-  } // make it generate a new one if that's already used!
+  }
+  // make it generate a new one if that's already used!
   if (checkIdExists(randomString)) {
     generateRandomString();
   }
   return randomString;
 }
 
+// Adds user info to users database
 function addNewUser(userEmail, userPassword) {
   let userID = generateRandomString();
   usersDatabase[userID] = {
@@ -41,9 +48,11 @@ function checkEmailExists(userEmail) {
   return false;
 }
 
-// Checks if a given ID is already in the users database
+// Checks if a given ID is already in the users/URLs databases
 function checkIdExists(userId) {
   if (userId in usersDatabase) {
+    return true;
+  } else if (userId in urlDatabase) {
     return true;
   }
   return false;
@@ -64,6 +73,10 @@ function getUserByEmail(userEmail) {
   }
 }
 
+/////////////////////////////////////////////////////////////
+// DATABASES ------------------------------------------------
+/////////////////////////////////////////////////////////////
+
 // Database of URLs
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -79,21 +92,13 @@ const usersDatabase = {
   }
 }
 
-// Get raw JSON of the database
+/////////////////////////////////////////////////////////////
+// GET REQUESTS ---------------------------------------------
+/////////////////////////////////////////////////////////////
+
+// Get raw JSON of the URLs database
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
-});
-
-// Delete :shortURL entry from database
-app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL]; // Delete removes the specified shortURL property from the urlDatabase
-  res.redirect("/urls"); // After updating, redirects back to the main URLs list
-});
-
-// Updates the long URL associated with :shortUrl
-app.post("/urls/:shortURL/", (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.longURL; // Updates the specified URL from the urlDatabase
-  res.redirect("/urls"); // After updating, redirects back to the main URLs list
 });
 
 // Redirects from the short link to the long URL associated with :shortURL in the database
@@ -102,6 +107,7 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+// Page where user can create a new shortlink
 // This needs to be above the route for /urls/:shortURL because it takes precedence, and otherwise Express will think new is a route parameter
 app.get("/urls/new", (req, res) => {
   let templateVars = { user: getUserById(req.cookies.userId) };
@@ -116,8 +122,41 @@ app.get("/urls/:shortURL", (req, res) => {
 
 // Shows all the URLs in the database
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, user: getUserById(req.cookies.userId) }; // This HAS to be in the form of an object, even if there's only 1 key
-  res.render("urls_index", templateVars); // urls_index is the .ejs file that's being passed the templateVars object. EJS automatically looks in a views folder, and appends the .ejs extension to urls_index
+  let templateVars = { urls: urlDatabase, user: getUserById(req.cookies.userId) };
+  res.render("urls_index", templateVars);
+});
+
+// Shows registration page
+app.get("/register", (req, res) => {
+  let templateVars = { user: getUserById(req.cookies.userId) };
+  res.render("register", templateVars);
+});
+
+// Shows login page
+app.get("/login", (req, res) => {
+  let templateVars = { user: getUserById(req.cookies.userId) };
+  res.render("login", templateVars);
+})
+
+// Redirect '/' to the urls list
+app.get("/", (req, res) => {
+  res.redirect('/urls');
+});
+
+/////////////////////////////////////////////////////////////
+// POST REQUESTS --------------------------------------------
+/////////////////////////////////////////////////////////////
+
+// Delete :shortURL entry from database
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL]; // Delete removes the specified shortURL property from the urlDatabase
+  res.redirect("/urls"); // After updating, redirects back to the main URLs list
+});
+
+// Updates the long URL associated with :shortUrl
+app.post("/urls/:shortURL/", (req, res) => {
+  urlDatabase[req.params.shortURL] = req.body.longURL; // Updates the specified URL from the urlDatabase
+  res.redirect("/urls"); // After updating, redirects back to the main URLs list
 });
 
 // Adds the long URL to the database with an associated random short URL
@@ -133,17 +172,6 @@ app.post("/logout", (req, res) => {
   res.redirect('/urls');
 });
 
-// Shows registration page
-app.get("/register", (req, res) => {
-  let templateVars = { user: getUserById(req.cookies.userId) };
-  res.render("register", templateVars);
-});
-
-app.get("/login", (req, res) => {
-  let templateVars = { user: getUserById(req.cookies.userId) };
-  res.render("login", templateVars);
-})
-
 // Log in existing user
 app.post("/login", (req, res) => {
   let email = req.body.email;
@@ -155,7 +183,7 @@ app.post("/login", (req, res) => {
   } else if (getUserByEmail(email)["password"] === password) {
     res.cookie("userId", getUserByEmail(email)["id"]);
     res.redirect("/urls");
-  } else {
+  } else { // This will be triggered if the password is invalid
     res.status(403).send('Error! Please check your email and password and try again.');
   }
 });
@@ -176,14 +204,11 @@ app.post("/register", (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
-  res.redirect('/urls');
-});
+/////////////////////////////////////////////////////////////
+// SERVER FUNCTION ------------------------------------------
+/////////////////////////////////////////////////////////////
 
 // Boot up the server
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
 });
-
-
-
