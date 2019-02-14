@@ -18,10 +18,30 @@ function generateRandomString() {
   return randomString;
 }
 
+function addNewUser(userEmail, userPassword) {
+  let userID = generateRandomString();
+  usersDatabase[userID] = {
+    id: userID,
+    email: userEmail,
+    password: userPassword
+  };
+  return userID;
+}
+
+// Database of URLs
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+// Database of user accounts
+const usersDatabase = {
+  "007": {
+    id: "007",
+    email: "bond@jamesbond.com",
+    password: "spy"
+  }
+}
 
 // Get raw JSON of the database
 app.get("/urls.json", (req, res) => {
@@ -91,10 +111,15 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
-// Creates new user account
+// Creates new user account, adds it to database and sets cookies
 app.post("/register", (req, res) => {
-  // let templateVars = { username: req.cookies.username };
-  // res.render("register", templateVars);
+  let email = req.body.email;
+  let password = req.body.password;
+  let userId = addNewUser(email, password);
+  // console.log(`Email: ${email} Password: ${password} ID: ${userId} and these are all users:`);
+  // console.log(JSON.stringify(usersDatabase, null, 4));
+
+  res.redirect("/");
 });
 
 app.get("/", (req, res) => {
