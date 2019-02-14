@@ -15,6 +15,9 @@ function generateRandomString() {
     let index = Math.floor(Math.random() * 62);
     randomString += allowableCharacters[index];
   } // make it generate a new one if that's already used!
+  if (checkIdExists(randomString)) {
+    generateRandomString();
+  }
   return randomString;
 }
 
@@ -26,6 +29,27 @@ function addNewUser(userEmail, userPassword) {
     password: userPassword
   };
   return userID;
+}
+
+// Checks if a given email is already in the users database
+function checkEmailExists(userEmail) {
+  for (id in usersDatabase) {
+    console.log(`checking ${id} in ${JSON.stringify(usersDatabase)}`)
+    if (usersDatabase[id]['email'] === userEmail) {
+      console.log(`checking ${usersDatabase[id]['email']} against ${userEmail} in the TRUE section`)
+      return true;
+    }
+    console.log(`checking ${usersDatabase[id]['email']} against ${userEmail} in the FALSE section`)
+  }
+  return false;
+}
+
+// Checks if a given ID is already in the users database
+function checkIdExists(userId) {
+  if (userId in usersDatabase) {
+    return true;
+  }
+  return false;
 }
 
 // Database of URLs
@@ -115,10 +139,15 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
+  if (email === "" || password === "") {
+    res.status(400).send('Error! You need to enter values for email and password.');
+  }
+  if (checkEmailExists(email)) {
+    res.status(400).send('Error! This email already has an account. Try another one.');
+  }
   let userId = addNewUser(email, password);
-  // console.log(`Email: ${email} Password: ${password} ID: ${userId} and these are all users:`);
-  // console.log(JSON.stringify(usersDatabase, null, 4));
-
+  // Set up user ID cookie
+  res.cookie("userId", userId);
   res.redirect("/");
 });
 
