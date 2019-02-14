@@ -85,6 +85,18 @@ app.post("/logout", (req, res) => {
   res.redirect('/urls');
 });
 
+// Shows registration page
+app.get("/register", (req, res) => {
+  let templateVars = { username: req.cookies.username };
+  res.render("register", templateVars);
+});
+
+// Creates new user account
+app.post("/register", (req, res) => {
+  // let templateVars = { username: req.cookies.username };
+  // res.render("register", templateVars);
+});
+
 app.get("/", (req, res) => {
   res.redirect('/urls');
 });
@@ -93,3 +105,6 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
 });
+
+
+
