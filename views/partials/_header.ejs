@@ -1,15 +1,36 @@
 <!-- views/partials/_header.ejs -->
 
+<style>
+  h6 {
+    margin-right: 20px;
+  }
+  .beside {
+  display: flex;
+  flex-direction: column;
+  align-content: space-between;
+  align-items: flex-end;
+  }
+</style>
+
+
 <h1>TinyApp</h1>
+
+<hr>
+
 <% if (username) { %>
-  <h6>Logged in as: <%= username %>
-  <form class="form-inline" action="/logout" method="POST">
-  <button type="submit" class="btn btn-primary">Logout</button>
-  </form>
+  <div class="beside">
+    <h6>Logged in as: <%= username %>
+    <form action="/logout" method="POST">
+    <button type="submit" class="btn btn-primary" style="float: right;">Logout</button>
+    </form>
+    </h6>
+  </div>
+  <hr>
 <% } else { %>
   <form class="form-inline" action="/login" method="POST">
-    <label for="username">Enter a Username:</label>
-    <input class="form-control" type="text" name="username">
+    <label for="username"><h6>Login:</h6></label>
+    <input class="form-control" type="text" name="username" placeholder="Enter a username">
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
+<hr>
 <% } %>

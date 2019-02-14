@@ -7,18 +7,29 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>All URLS | TinyApp</title>
+  <style>
+    .buttons {
+      display: flex;
+    }
+    ul {
+      list-style-type: none;
+      padding-left: 10px;
+    }
+  </style>
 </head>
 <body style="font-size:20px; padding:50px;">
   <% include ./partials/_header %>
   <h2>Shortened URLs</h2>
   <% for (var shortURL in urls) { %>
       <ul>
-        <li><b><%= shortURL %></b> will go to: <%= urls[shortURL] %>
-          <a href="/urls/<%= shortURL %>"><button type="button">Update</button></a>
-          <form method="POST" action="<%= "/urls/"+shortURL+"/delete" %>"><button type="submit">Delete</button></form>
+        <li><b><a href="/u/<%= shortURL %>">/u/<%= shortURL %></a></b> will go to: <%= urls[shortURL] %>
+        <div class = "buttons">
+          <a href="/urls/<%= shortURL %>"><button type="button" class="btn btn-primary">Update</button></a>
+          <form method="POST" action="<%= "/urls/"+shortURL+"/delete" %>" class="form-inline"><button type="submit" class="btn btn-primary">🗑️</button></form>
+        </div>
         </li>
       </ul>
   <% } %>
-  <h5><a href="/urls/new">Shorten More!</a></h5>
+  <h5><a href="/urls/new">🔗 Shorten More!</a></h5>
 </body>
 </html>
