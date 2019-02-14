@@ -85,6 +85,10 @@ app.post("/logout", (req, res) => {
   res.redirect('/urls');
 });
 
+app.get("/", (req, res) => {
+  res.redirect('/urls');
+});
+
 // Boot up the server
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
