@@ -4,26 +4,36 @@
   h6 {
     margin-right: 20px;
   }
-  .beside {
+  .right-end {
   display: flex;
   flex-direction: column;
   align-content: space-between;
   align-items: flex-end;
   }
+  .beside {
+  display: flex;
+  }
 </style>
 
 
-<h1>TinyApp</h1>
+<h1><a href="/">TinyApp</a></h1>
 
 <hr>
 
 <% if (user) { %>
-  <div class="beside">
+  <div class="right-end">
     <h6>Logged in as: <%= user.email %>
+    <br/><br/>
     <form action="/logout" method="POST">
     <button type="submit" class="btn btn-primary" style="float: right;">Logout</button>
     </form>
     </h6>
+  </div>
+  <hr>
+<% } else { %>
+  <div class="beside">
+    <h6><a href="/register">Sign Up</a></h6>
+    <h6><a href="/login">Login</a></h6>
   </div>
   <hr>
 <% } %>

@@ -54,6 +54,16 @@ function getUserById(userId) {
   return usersDatabase[userId];
 }
 
+// Get user object by email
+function getUserByEmail(userEmail) {
+  let userId = "";
+  for (id in usersDatabase) {
+    if (usersDatabase[id]['email'] === userEmail) {
+      return usersDatabase[id];
+    }
+  }
+}
+
 // Database of URLs
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -117,15 +127,9 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${newShortURL}`); // Redirect to the page for the newly-generated short URL
 });
 
-// Receives userId from header form and saves them to a cookie
-app.post("/login", (req, res) => {
-  res.cookie("userId", req.body.userId); //FIX THIS
-  res.redirect('/urls');
-});
-
 // Logs out user and clears cookie
 app.post("/logout", (req, res) => {
-  res.clearCookie("userId"); // Saves the user's userId to a userId cookie
+  res.clearCookie("userId");
   res.redirect('/urls');
 });
 
@@ -133,6 +137,27 @@ app.post("/logout", (req, res) => {
 app.get("/register", (req, res) => {
   let templateVars = { user: getUserById(req.cookies.userId) };
   res.render("register", templateVars);
+});
+
+app.get("/login", (req, res) => {
+  let templateVars = { user: getUserById(req.cookies.userId) };
+  res.render("login", templateVars);
+})
+
+// Log in existing user
+app.post("/login", (req, res) => {
+  let email = req.body.email;
+  let password = req.body.password;
+  if (email === "" || password === "") {
+    res.status(400).send("Error! You need to enter values for email and password.");
+  } else if (checkEmailExists(email) === false) {
+    res.status(403).send("Error! Couldn't find an account with that email. Try again.");
+  } else if (getUserByEmail(email)["password"] === password) {
+    res.cookie("userId", getUserByEmail(email)["id"]);
+    res.redirect("/urls");
+  } else {
+    res.status(403).send('Error! Please check your email and password and try again.');
+  }
 });
 
 // Creates new user account, adds it to database and sets cookies
