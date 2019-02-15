@@ -81,7 +81,6 @@ function urlsForUser(id) {
       userUrls[shortUrl] = {...urlDatabase[shortUrl]};
     }
   }
-  console.log(JSON.stringify(userUrls));
   return userUrls;
 }
 
