@@ -8,6 +8,7 @@ const timestamp = require('time-stamp');
 app.set("view engine", "ejs");
 const bodyParser = require("body-parser"); // Converts the request from a Buffer to something we can read
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static('public')); // Grants access to stylesheet
 app.use(cookieSession({
   httpOnly: false,
   name: 'session',
