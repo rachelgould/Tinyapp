@@ -15,21 +15,29 @@
       list-style-type: none;
       padding-left: 10px;
     }
+    img {
+      max-width: 500px;
+    }
   </style>
 </head>
 <body style="font-size:20px; padding:50px;">
   <% include ./partials/_header %>
   <h2>Shortened URLs</h2>
-  <% for (var shortURL in urls) { %>
-      <ul>
-        <li><b><a href="/u/<%= shortURL %>">/u/<%= shortURL %></a></b> will go to: <%= urls[shortURL]['longURL'] %>
-        <div class = "buttons">
-          <a href="/urls/<%= shortURL %>"><button type="button" class="btn btn-primary">Update</button></a>
-          <form method="POST" action="<%= "/urls/"+shortURL+"/delete" %>" class="form-inline"><button type="submit" class="btn btn-primary">🗑️</button></form>
-        </div>
-        </li>
-      </ul>
+  <% if (Object.keys(urls).length === 0) { %>
+    <img src="https://media1.tenor.com/images/d79dbb3d2f70aa3b6e488c8c4bbdd36e/tenor.gif" alt="Link dancing">
+    <h6>You haven't shortened any URLs yet! <a href="/urls/new">Click here</a> to get started.</h6>
+  <% } else { %>
+    <% for (var shortURL in urls) { %>
+        <ul>
+          <li><b><a href="/u/<%= shortURL %>">/u/<%= shortURL %></a></b> will go to: <%= urls[shortURL]['longURL'] %>
+          <div class = "buttons">
+            <a href="/urls/<%= shortURL %>"><button type="button" class="btn btn-primary">Update</button></a>
+            <form method="POST" action="<%= "/urls/"+shortURL+"/delete" %>" class="form-inline"><button type="submit" class="btn btn-primary">🗑️</button></form>
+          </div>
+          </li>
+        </ul>
+    <% } %>
+      <h5><a href="/urls/new">🔗 Shorten More!</a></h5>
   <% } %>
-  <h5><a href="/urls/new">🔗 Shorten More!</a></h5>
 </body>
 </html>

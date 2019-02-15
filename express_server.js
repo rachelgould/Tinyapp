@@ -2,11 +2,16 @@ const express = require("express");
 const bcrypt = require('bcrypt'); // For password hashing
 const app = express();
 const PORT = 8080; // default port 8080
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 app.set("view engine", "ejs");
 const bodyParser = require("body-parser"); // Converts the request from a Buffer to something we can read
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+app.use(cookieSession({
+  httpOnly: false, // Must disable so it can be accessed by scripts
+  name: 'session',
+  keys: ['key1'],
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
 
 /////////////////////////////////////////////////////////////
 // HELPER FUNCTIONS -----------------------------------------
@@ -108,41 +113,42 @@ app.get("/u/:shortURL", (req, res) => {
 // Page where user can create a new shortlink
 // This needs to be above the route for /urls/:shortURL because it takes precedence, and otherwise Express will think new is a route parameter
 app.get("/urls/new", (req, res) => {
-  if (req.cookies.userId) {
-    let templateVars = { user: getUserById(req.cookies.userId) };
+  console.log(req.session.user_id);
+  if (req.session.user_id) {
+    let templateVars = { user: getUserById(req.session.user_id) };
     res.render("urls_new", templateVars);
   } else {
-    let templateVars = { user: getUserById(req.cookies.userId), restrictedAction: true };
+    let templateVars = { user: getUserById(req.session.user_id), restrictedAction: true };
     res.render("login", templateVars)
   }
 });
 
 // Shows the edit page for :shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  if (req.cookies.userId) {
-    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]['longURL'], user: getUserById(req.cookies.userId) };
+  if (req.session.user_id) {
+    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]['longURL'], user: getUserById(req.session.user_id) };
     res.render("urls_show", templateVars);
   } else {
-    let templateVars = { user: getUserById(req.cookies.userId), restrictedAction: true };
+    let templateVars = { user: getUserById(req.session.user_id), restrictedAction: true };
     res.render("login", templateVars)
   }
 });
 
 // Shows all the URLs in the database
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlsForUser(req.cookies.userId), user: getUserById(req.cookies.userId) };
+  let templateVars = { urls: urlsForUser(req.session.user_id), user: getUserById(req.session.user_id) };
   res.render("urls_index", templateVars);
 });
 
 // Shows registration page
 app.get("/register", (req, res) => {
-  let templateVars = { user: getUserById(req.cookies.userId) };
+  let templateVars = { user: getUserById(req.session.user_id) };
   res.render("register", templateVars);
 });
 
 // Shows login page
 app.get("/login", (req, res) => {
-  let templateVars = { user: getUserById(req.cookies.userId), restrictedAction: false };
+  let templateVars = { user: getUserById(req.session.user_id), restrictedAction: false };
   res.render("login", templateVars);
 })
 
@@ -157,22 +163,22 @@ app.get("/", (req, res) => {
 
 // Delete :shortURL entry from database
 app.post("/urls/:shortURL/delete", (req, res) => {
-  if (req.cookies.userId) {
+  if (req.session.user_id) {
     delete urlDatabase[req.params.shortURL]; // Delete removes the specified shortURL property from the urlDatabase
     res.redirect("/urls"); // After updating, redirects back to the main URLs list
   } else {
-    let templateVars = { user: getUserById(req.cookies.userId), restrictedAction: true };
+    let templateVars = { user: getUserById(req.session.user_id), restrictedAction: true };
     res.render("login", templateVars);
   }
 });
 
 // Updates the long URL associated with :shortUrl
 app.post("/urls/:shortURL/", (req, res) => {
-  if (req.cookies.userId) {
+  if (req.session.user_id) {
     urlDatabase[req.params.shortURL]['longURL'] = req.body.longURL; // Updates the specified URL from the urlDatabase
     res.redirect("/urls"); // After updating, redirects back to the main URLs list
   } else {
-    let templateVars = { user: getUserById(req.cookies.userId), restrictedAction: true };
+    let templateVars = { user: getUserById(req.session.user_id), restrictedAction: true };
     res.render("login", templateVars);
   }
 });
@@ -180,13 +186,13 @@ app.post("/urls/:shortURL/", (req, res) => {
 // Adds the long URL to the database with an associated random short URL
 app.post("/urls", (req, res) => {
   let newShortURL = generateRandomString();
-  urlDatabase[newShortURL] = { longURL: [req.body.longURL], userId: req.cookies.userId }; // Adds it to our url database
+  urlDatabase[newShortURL] = { longURL: [req.body.longURL], userId: req.session.user_id }; // Adds it to our url database
   res.redirect(`/urls/${newShortURL}`); // Redirect to the page for the newly-generated short URL
 });
 
 // Logs out user and clears cookie
 app.post("/logout", (req, res) => {
-  res.clearCookie("userId");
+  req.session = null;
   res.redirect('/urls');
 });
 
@@ -199,7 +205,7 @@ app.post("/login", (req, res) => {
   } else if (checkEmailExists(email) === false) {
     res.status(403).send("Error! Couldn't find an account with that email. Try again.");
   } else if (bcrypt.compareSync(password, getUserByEmail(email)["password"])) {
-    res.cookie("userId", getUserByEmail(email)["id"]);
+    req.session.user_id = getUserByEmail(email)["id"];
     res.redirect("/urls");
   } else { // This will be triggered if the password is invalid
     res.status(403).send('Error! Please check your email and password and try again.');
@@ -217,7 +223,7 @@ app.post("/register", (req, res) => {
   } else {
     let userId = addNewUser(email, password);
     // Set up user ID cookie
-    res.cookie("userId", userId);
+    req.session.user_id = userId;
     res.redirect("/");
   }
 });
