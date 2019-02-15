@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require('bcrypt'); // For password hashing
 const app = express();
 const PORT = 8080; // default port 8080
 const cookieParser = require('cookie-parser');
@@ -89,19 +90,10 @@ function urlsForUser(id) {
 /////////////////////////////////////////////////////////////
 
 // Database of URLs
-const urlDatabase = {
-  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: "007" },
-  "sgq3y6": { longURL: "http://www.google.com", userId: "007" }
-};
+const urlDatabase = { };
 
 // Database of user accounts
-const usersDatabase = {
-  "007": {
-    id: "007",
-    email: "bond@jamesbond.com",
-    password: "spy"
-  }
-}
+const usersDatabase = { };
 
 /////////////////////////////////////////////////////////////
 // GET REQUESTS ---------------------------------------------
@@ -206,7 +198,7 @@ app.post("/login", (req, res) => {
     res.status(400).send("Error! You need to enter values for email and password.");
   } else if (checkEmailExists(email) === false) {
     res.status(403).send("Error! Couldn't find an account with that email. Try again.");
-  } else if (getUserByEmail(email)["password"] === password) {
+  } else if (bcrypt.compareSync(password, getUserByEmail(email)["password"])) {
     res.cookie("userId", getUserByEmail(email)["id"]);
     res.redirect("/urls");
   } else { // This will be triggered if the password is invalid
@@ -217,7 +209,7 @@ app.post("/login", (req, res) => {
 // Creates new user account, adds it to database and sets cookies
 app.post("/register", (req, res) => {
   let email = req.body.email;
-  let password = req.body.password;
+  let password = bcrypt.hashSync(req.body.password, 10);
   if (email === "" || password === "") {
     res.status(400).send('Error! You need to enter values for email and password.');
   } else if (checkEmailExists(email)) {
