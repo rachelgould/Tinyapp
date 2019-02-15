@@ -199,14 +199,14 @@ app.post("/login", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   if (email === "" || password === "") {
-    res.status(400).send("Error! You need to enter values for email and password.");
+    res.status(400).send("<h1>Error!</h1> <p>You need to enter values for email and password.<p>");
   } else if (checkEmailExists(email) === false) {
-    res.status(403).send("Error! Couldn't find an account with that email. Try again.");
+    res.status(403).send("<h1>Error!</h1> <p>Couldn't find an account with that email. Try again.</p>");
   } else if (bcrypt.compareSync(password, getUserByEmail(email)["password"])) {
     req.session.user_id = getUserByEmail(email)["id"];
     res.redirect("/urls");
   } else { // This will be triggered if the password is invalid
-    res.status(403).send('Error! Please check your email and password and try again.');
+    res.status(403).send('<h1>Error!</h1> <p>Please check your email and password and try again.</p>');
   }
 });
 
@@ -215,9 +215,9 @@ app.post("/register", (req, res) => {
   let email = req.body.email;
   let password = bcrypt.hashSync(req.body.password, 10);
   if (email === "" || password === "") {
-    res.status(400).send('Error! You need to enter values for email and password.');
+    res.status(400).send('<h1>Error!</h1> <p>You need to enter values for email and password.</p>');
   } else if (checkEmailExists(email)) {
-    res.status(400).send('Error! This email already has an account. Try another one.');
+    res.status(400).send('<h1>Error!</h1> <p>This email already has an account. Try another one.</p>');
   } else {
     let userId = addNewUser(email, password);
     // Set up user ID cookie

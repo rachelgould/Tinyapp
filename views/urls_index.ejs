@@ -22,10 +22,10 @@
 </head>
 <body style="font-size:20px; padding:50px;">
   <% include ./partials/_header %>
-  <h2>Shortened URLs</h2>
+  <h2>Shortened Links</h2>
   <% if (Object.keys(urls).length === 0) { %>
     <img src="https://media1.tenor.com/images/d79dbb3d2f70aa3b6e488c8c4bbdd36e/tenor.gif" alt="Link dancing">
-    <h6>You haven't shortened any URLs yet! <a href="/urls/new">Click here</a> to get started.</h6>
+    <h6>You haven't shortened any Links yet! <a href="/urls/new">Click here</a> to get started.</h6>
   <% } else { %>
     <% for (var shortURL in urls) { %>
         <ul>
