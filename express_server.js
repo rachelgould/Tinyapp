@@ -73,14 +73,26 @@ function getUserByEmail(userEmail) {
   }
 }
 
+// Returns only the URLs that this user has created
+function urlsForUser(id) {
+  let userUrls = { };
+  for (shortUrl in urlDatabase) {
+    if (urlDatabase[shortUrl]['userId'] === id) {
+      userUrls[shortUrl] = {...urlDatabase[shortUrl]};
+    }
+  }
+  console.log(JSON.stringify(userUrls));
+  return userUrls;
+}
+
 /////////////////////////////////////////////////////////////
 // DATABASES ------------------------------------------------
 /////////////////////////////////////////////////////////////
 
 // Database of URLs
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: "007" },
+  "9sm5xK": { longURL: "http://www.google.com", userId: "007" }
 };
 
 // Database of user accounts
@@ -96,33 +108,38 @@ const usersDatabase = {
 // GET REQUESTS ---------------------------------------------
 /////////////////////////////////////////////////////////////
 
-// Get raw JSON of the URLs database
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
 // Redirects from the short link to the long URL associated with :shortURL in the database
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL]['longURL'];
   res.redirect(longURL);
 });
 
 // Page where user can create a new shortlink
 // This needs to be above the route for /urls/:shortURL because it takes precedence, and otherwise Express will think new is a route parameter
 app.get("/urls/new", (req, res) => {
-  let templateVars = { user: getUserById(req.cookies.userId) };
-  res.render("urls_new", templateVars);
+  if (req.cookies.userId) {
+    let templateVars = { user: getUserById(req.cookies.userId) };
+    res.render("urls_new", templateVars);
+  } else {
+    let templateVars = { user: getUserById(req.cookies.userId), restrictedAction: true };
+    res.render("login", templateVars)
+  }
 });
 
 // Shows the edit page for :shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: getUserById(req.cookies.userId) };
-  res.render("urls_show", templateVars);
+  if (req.cookies.userId) {
+    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]['longURL'], user: getUserById(req.cookies.userId) };
+    res.render("urls_show", templateVars);
+  } else {
+    let templateVars = { user: getUserById(req.cookies.userId), restrictedAction: true };
+    res.render("login", templateVars)
+  }
 });
 
 // Shows all the URLs in the database
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, user: getUserById(req.cookies.userId) };
+  let templateVars = { urls: urlsForUser(req.cookies.userId), user: getUserById(req.cookies.userId) };
   res.render("urls_index", templateVars);
 });
 
@@ -134,7 +151,7 @@ app.get("/register", (req, res) => {
 
 // Shows login page
 app.get("/login", (req, res) => {
-  let templateVars = { user: getUserById(req.cookies.userId) };
+  let templateVars = { user: getUserById(req.cookies.userId), restrictedAction: false };
   res.render("login", templateVars);
 })
 
@@ -155,14 +172,14 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 // Updates the long URL associated with :shortUrl
 app.post("/urls/:shortURL/", (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.longURL; // Updates the specified URL from the urlDatabase
+  urlDatabase[req.params.shortURL]['longURL'] = req.body.longURL; // Updates the specified URL from the urlDatabase
   res.redirect("/urls"); // After updating, redirects back to the main URLs list
 });
 
 // Adds the long URL to the database with an associated random short URL
 app.post("/urls", (req, res) => {
   let newShortURL = generateRandomString();
-  urlDatabase[newShortURL] = [req.body.longURL]; // Adds it to our url database
+  urlDatabase[newShortURL] = { longURL: [req.body.longURL], userId: req.cookies.userId }; // Adds it to our url database
   res.redirect(`/urls/${newShortURL}`); // Redirect to the page for the newly-generated short URL
 });
 
