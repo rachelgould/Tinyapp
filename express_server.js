@@ -92,6 +92,19 @@ function urlsForUser(id) {
   return userUrls;
 }
 
+// Returns the number of unique visitors that have used the /u/shortURL redirect
+function calcUniqueVisitors(shortUrl) {
+  let arrOfIds = urlDatabase[shortUrl]['visitorIds'];
+  let uniqueIds = [];
+  arrOfIds.forEach(function(id) {
+    if (uniqueIds.includes(id)) {
+    } else {
+      uniqueIds.push(id);
+    }
+  })
+  return uniqueIds.length;
+}
+
 /////////////////////////////////////////////////////////////
 // DATABASES ------------------------------------------------
 /////////////////////////////////////////////////////////////
@@ -109,6 +122,14 @@ const usersDatabase = { };
 // Redirects from the short link to the long URL associated with :shortURL in the database
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]['longURL'];
+  urlDatabase[req.params.shortURL]['traffic']++;
+  // Checks if they already have a visitor cookie for this URL
+  if (req.session.visitor_id) {
+    urlDatabase[req.params.shortURL]['visitorIds'].push(req.session.visitor_id);
+  } else {
+    req.session.visitor_id = generateRandomString();
+    urlDatabase[req.params.shortURL]['visitorIds'].push(req.session.visitor_id);
+  }
   res.redirect(longURL);
 });
 
@@ -127,7 +148,7 @@ app.get("/urls/new", (req, res) => {
 // Shows the edit page for :shortURL
 app.get("/urls/:shortURL", (req, res) => {
   if (req.session.user_id === urlDatabase[req.params.shortURL]['userId']) {
-    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]['longURL'], user: getUserById(req.session.user_id), createdOn: urlDatabase[req.params.shortURL]['createdOn'] };
+    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]['longURL'], user: getUserById(req.session.user_id), createdOn: urlDatabase[req.params.shortURL]['createdOn'], traffic: urlDatabase[req.params.shortURL]['traffic'], uniqueVisitors: calcUniqueVisitors([req.params.shortURL]) };
     res.render("urls_show", templateVars);
   } else if (req.session.user_id) {
     res.status(405).send("<h1>Error!</h1> <p>You're not permitted to do this.<p>");
@@ -139,7 +160,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 // Shows all the URLs in the database
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlsForUser(req.session.user_id), user: getUserById(req.session.user_id) };
+  let templateVars = { urls: urlsForUser(req.session.user_id), user: getUserById(req.session.user_id), calcUniqueVisitors: calcUniqueVisitors };
   res.render("urls_index", templateVars);
 });
 
@@ -197,7 +218,7 @@ app.put("/urls/:shortURL/", (req, res) => {
 // Adds the long URL to the database with an associated random short URL
 app.post("/urls", (req, res) => {
   let newShortURL = generateRandomString();
-  urlDatabase[newShortURL] = { longURL: [req.body.longURL], userId: req.session.user_id, createdOn: timestamp('DD/MM/YYYY') }; // Adds it to our url database
+  urlDatabase[newShortURL] = { longURL: [req.body.longURL], userId: req.session.user_id, createdOn: timestamp('DD/MM/YYYY'), traffic: 0, visitorIds: [] }; // Adds it to our url database
   res.redirect(`/urls/${newShortURL}`); // Redirect to the page for the newly-generated short URL
 });
 

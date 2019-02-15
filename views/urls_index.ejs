@@ -29,7 +29,7 @@
   <% } else { %>
     <% for (var shortURL in urls) { %>
         <ul>
-          <li><b><a href="/u/<%= shortURL %>">/u/<%= shortURL %></a></b> will go to: <%= urls[shortURL]['longURL'] %> <h6>(Link created on <%= urls[shortURL]['createdOn'] %>)</h6>
+          <li><b><a href="/u/<%= shortURL %>">/u/<%= shortURL %></a></b> will go to: <%= urls[shortURL]['longURL'] %> <h6>(Link created on <%= urls[shortURL]['createdOn'] %>. Visited <%= urls[shortURL]['traffic'] %> times by <%= calcUniqueVisitors(shortURL) %> people.)</h6>
           <div class = "buttons">
             <a href="/urls/<%= shortURL %>"><button type="button" class="btn btn-primary">Update</button></a>
             <form method="POST" action="<%= "/urls/"+shortURL+"/delete?_method=DELETE" %>" class="form-inline"><button type="submit" class="btn btn-primary">🗑️</button></form>
