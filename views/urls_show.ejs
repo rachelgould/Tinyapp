@@ -11,6 +11,7 @@
 <body style="font-size:20px; padding:50px;">
   <% include ./partials/_header %>
   <h2><%= shortURL %></h2>
+  <h6>(Link created on <%= createdOn %>)</h6>
   <form method="POST" action="/urls/<%= shortURL %>?_method=PUT" class="form-inline">
     <input type="url" id="longURL" name="longURL" size="40" placeholder="<%= longURL %>"><br/>
     <button type="submit" class="btn btn-primary">Update URL</button>

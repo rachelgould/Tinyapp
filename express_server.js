@@ -4,6 +4,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const cookieSession = require('cookie-session');
 const methodOverride = require('method-override');
+const timestamp = require('time-stamp');
 app.set("view engine", "ejs");
 const bodyParser = require("body-parser"); // Converts the request from a Buffer to something we can read
 app.use(bodyParser.urlencoded({extended: true}));
@@ -126,7 +127,7 @@ app.get("/urls/new", (req, res) => {
 // Shows the edit page for :shortURL
 app.get("/urls/:shortURL", (req, res) => {
   if (req.session.user_id) {
-    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]['longURL'], user: getUserById(req.session.user_id) };
+    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]['longURL'], user: getUserById(req.session.user_id), createdOn: urlDatabase[req.params.shortURL]['createdOn'] };
     res.render("urls_show", templateVars);
   } else {
     let templateVars = { user: getUserById(req.session.user_id), restrictedAction: true };
@@ -194,7 +195,7 @@ app.put("/urls/:shortURL/", (req, res) => {
 // Adds the long URL to the database with an associated random short URL
 app.post("/urls", (req, res) => {
   let newShortURL = generateRandomString();
-  urlDatabase[newShortURL] = { longURL: [req.body.longURL], userId: req.session.user_id }; // Adds it to our url database
+  urlDatabase[newShortURL] = { longURL: [req.body.longURL], userId: req.session.user_id, createdOn: timestamp('DD/MM/YYYY') }; // Adds it to our url database
   res.redirect(`/urls/${newShortURL}`); // Redirect to the page for the newly-generated short URL
 });
 
