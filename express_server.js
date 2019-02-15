@@ -71,7 +71,6 @@ function getUserById(userId) {
 
 // Get user object by email
 function getUserByEmail(userEmail) {
-  let userId = "";
   for (id in usersDatabase) {
     if (usersDatabase[id]['email'] === userEmail) {
       return usersDatabase[id];
@@ -119,7 +118,7 @@ app.get("/urls/new", (req, res) => {
     res.render("urls_new", templateVars);
   } else {
     let templateVars = { user: getUserById(req.session.user_id), restrictedAction: true };
-    res.render("login", templateVars)
+    res.render("login", templateVars);
   }
 });
 
@@ -130,7 +129,7 @@ app.get("/urls/:shortURL", (req, res) => {
     res.render("urls_show", templateVars);
   } else {
     let templateVars = { user: getUserById(req.session.user_id), restrictedAction: true };
-    res.render("login", templateVars)
+    res.render("login", templateVars);
   }
 });
 
@@ -150,7 +149,7 @@ app.get("/register", (req, res) => {
 app.get("/login", (req, res) => {
   let templateVars = { user: getUserById(req.session.user_id), restrictedAction: false };
   res.render("login", templateVars);
-})
+});
 
 // Redirect '/' to the urls list
 app.get("/", (req, res) => {
