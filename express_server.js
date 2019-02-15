@@ -126,9 +126,11 @@ app.get("/urls/new", (req, res) => {
 
 // Shows the edit page for :shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  if (req.session.user_id) {
+  if (req.session.user_id === urlDatabase[req.params.shortURL]['userId']) {
     let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]['longURL'], user: getUserById(req.session.user_id), createdOn: urlDatabase[req.params.shortURL]['createdOn'] };
     res.render("urls_show", templateVars);
+  } else if (req.session.user_id) {
+    res.status(405).send("<h1>Error!</h1> <p>You're not permitted to do this.<p>");
   } else {
     let templateVars = { user: getUserById(req.session.user_id), restrictedAction: true };
     res.render("login", templateVars);
