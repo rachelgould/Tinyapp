@@ -92,7 +92,7 @@ function urlsForUser(id) {
 // Database of URLs
 const urlDatabase = {
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userId: "007" },
-  "9sm5xK": { longURL: "http://www.google.com", userId: "007" }
+  "sgq3y6": { longURL: "http://www.google.com", userId: "007" }
 };
 
 // Database of user accounts
@@ -166,14 +166,24 @@ app.get("/", (req, res) => {
 
 // Delete :shortURL entry from database
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL]; // Delete removes the specified shortURL property from the urlDatabase
-  res.redirect("/urls"); // After updating, redirects back to the main URLs list
+  if (req.cookies.userId) {
+    delete urlDatabase[req.params.shortURL]; // Delete removes the specified shortURL property from the urlDatabase
+    res.redirect("/urls"); // After updating, redirects back to the main URLs list
+  } else {
+    let templateVars = { user: getUserById(req.cookies.userId), restrictedAction: true };
+    res.render("login", templateVars);
+  }
 });
 
 // Updates the long URL associated with :shortUrl
 app.post("/urls/:shortURL/", (req, res) => {
-  urlDatabase[req.params.shortURL]['longURL'] = req.body.longURL; // Updates the specified URL from the urlDatabase
-  res.redirect("/urls"); // After updating, redirects back to the main URLs list
+  if (req.cookies.userId) {
+    urlDatabase[req.params.shortURL]['longURL'] = req.body.longURL; // Updates the specified URL from the urlDatabase
+    res.redirect("/urls"); // After updating, redirects back to the main URLs list
+  } else {
+    let templateVars = { user: getUserById(req.cookies.userId), restrictedAction: true };
+    res.render("login", templateVars);
+  }
 });
 
 // Adds the long URL to the database with an associated random short URL
