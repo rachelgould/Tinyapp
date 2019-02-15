@@ -112,7 +112,6 @@ app.get("/u/:shortURL", (req, res) => {
 // Page where user can create a new shortlink
 // This needs to be above the route for /urls/:shortURL because it takes precedence, and otherwise Express will think new is a route parameter
 app.get("/urls/new", (req, res) => {
-  console.log(req.session.user_id);
   if (req.session.user_id) {
     let templateVars = { user: getUserById(req.session.user_id) };
     res.render("urls_new", templateVars);
