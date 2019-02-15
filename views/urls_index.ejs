@@ -32,7 +32,7 @@
           <li><b><a href="/u/<%= shortURL %>">/u/<%= shortURL %></a></b> will go to: <%= urls[shortURL]['longURL'] %>
           <div class = "buttons">
             <a href="/urls/<%= shortURL %>"><button type="button" class="btn btn-primary">Update</button></a>
-            <form method="POST" action="<%= "/urls/"+shortURL+"/delete" %>" class="form-inline"><button type="submit" class="btn btn-primary">🗑️</button></form>
+            <form method="POST" action="<%= "/urls/"+shortURL+"/delete?_method=DELETE" %>" class="form-inline"><button type="submit" class="btn btn-primary">🗑️</button></form>
           </div>
           </li>
         </ul>

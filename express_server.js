@@ -3,15 +3,17 @@ const bcrypt = require('bcrypt'); // For password hashing
 const app = express();
 const PORT = 8080; // default port 8080
 const cookieSession = require('cookie-session');
+const methodOverride = require('method-override');
 app.set("view engine", "ejs");
 const bodyParser = require("body-parser"); // Converts the request from a Buffer to something we can read
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
-  httpOnly: false, // Must disable so it can be accessed by scripts
+  httpOnly: false,
   name: 'session',
   keys: ['key1'],
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
+app.use(methodOverride('_method'));
 
 /////////////////////////////////////////////////////////////
 // HELPER FUNCTIONS -----------------------------------------
@@ -156,11 +158,11 @@ app.get("/", (req, res) => {
 });
 
 /////////////////////////////////////////////////////////////
-// POST REQUESTS --------------------------------------------
+// DELETE REQUESTS ------------------------------------------
 /////////////////////////////////////////////////////////////
 
 // Delete :shortURL entry from database
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL/delete", (req, res) => {
   if (req.session.user_id) {
     delete urlDatabase[req.params.shortURL]; // Delete removes the specified shortURL property from the urlDatabase
     res.redirect("/urls"); // After updating, redirects back to the main URLs list
@@ -170,8 +172,12 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
+/////////////////////////////////////////////////////////////
+// PUT REQUESTS ---------------------------------------------
+/////////////////////////////////////////////////////////////
+
 // Updates the long URL associated with :shortUrl
-app.post("/urls/:shortURL/", (req, res) => {
+app.put("/urls/:shortURL/", (req, res) => {
   if (req.session.user_id) {
     urlDatabase[req.params.shortURL]['longURL'] = req.body.longURL; // Updates the specified URL from the urlDatabase
     res.redirect("/urls"); // After updating, redirects back to the main URLs list
@@ -180,6 +186,10 @@ app.post("/urls/:shortURL/", (req, res) => {
     res.render("login", templateVars);
   }
 });
+
+/////////////////////////////////////////////////////////////
+// POST REQUESTS --------------------------------------------
+/////////////////////////////////////////////////////////////
 
 // Adds the long URL to the database with an associated random short URL
 app.post("/urls", (req, res) => {
