@@ -5,9 +5,13 @@ TinyApp is a full stack web application built with Node and Express that allows 
 ## Final Product
 
 !["Homepage when a user is not logged in"](/docs/urls-not-logged-in.png)
+Homepage when a user is not logged in
 !["Homepage when a user is logged in, with many shortened URLs"](/docs/urls-list.png)
+Homepage when a user is logged in, with many shortened URLs
 !["Users can edit their shortened URLs, and view stats on unique and total visitors"](/docs/view-url.png)
+Users can edit their shortened URLs, and view stats on unique and total visitors
 !["If a user tries to perform certain actions without being logged in, they will be redirected to the login page with a warning"](/docs/login-page.png)
+If a user tries to perform certain actions without being logged in, they will be redirected to the login page with a warning
 
 ## Dependencies
 
