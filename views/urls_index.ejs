@@ -8,17 +8,17 @@
 </head>
 <body style="font-size:20px; padding:50px;">
   <% include ./partials/_header %>
-  <h2>Shortened Links</h2>
+  <h2 class="center">Shortened Links</h2>
   <% if (Object.keys(urls).length === 0) { %>
-    <img src="https://media1.tenor.com/images/d79dbb3d2f70aa3b6e488c8c4bbdd36e/tenor.gif" alt="Link dancing">
-    <h6>You haven't shortened any Links yet! <a href="/urls/new">Click here</a> to get started.</h6>
+    <img src="https://media1.tenor.com/images/d79dbb3d2f70aa3b6e488c8c4bbdd36e/tenor.gif" alt="Link dancing" class="center">
+    <p class="center">You haven't shortened any Links yet! <a href="/urls/new">Click here</a> to get started.</p>
   <% } else { %>
     <% for (var shortURL in urls) { %>
         <ul>
           <li><b><a href="/u/<%= shortURL %>">/u/<%= shortURL %></a></b> will go to: <%= urls[shortURL]['longURL'] %> <h6>(Link created on <%= urls[shortURL]['createdOn'] %>. Visited <%= urls[shortURL]['traffic'] %> times by <%= calcUniqueVisitors(shortURL) %> people.)</h6>
-          <div class = "buttons">
-            <a href="/urls/<%= shortURL %>"><button type="button" class="btn btn-primary">Update</button></a>
-            <form method="POST" action="<%= "/urls/"+shortURL+"/delete?_method=DELETE" %>" class="form-inline"><button type="submit" class="btn btn-primary">🗑️</button></form>
+          <div class = "index-buttons">
+            <a href="/urls/<%= shortURL %>"><button type="button">Update</button></a>
+            <form method="POST" action="<%= "/urls/"+shortURL+"/delete?_method=DELETE" %>"><button type="submit">Delete</button></form>
           </div>
           </li>
         </ul>

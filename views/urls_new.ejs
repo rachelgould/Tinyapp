@@ -10,11 +10,11 @@
 <body style="font-size:20px; padding:50px;">
   <% include ./partials/_header %>
   <h2>Create Tiny URL</h2>
-  <form class="form-inline" action="/urls" method="POST">
-    <div class="form-group mb-2">
+  <form class="center" action="/urls" method="POST">
+    <div>
       <label for="longURL">Enter a URL:</label>
-      <input class="form-control" type="url" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <input type="url" name="longURL" placeholder="http://">
+      <button type="submit">Submit</button>
     </div>
   </form>
 </body>

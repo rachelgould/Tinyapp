@@ -1,23 +1,20 @@
 <!-- views/partials/_header.ejs -->
 
-<h1><a href="/">TinyApp</a></h1>
-
-<hr>
-
-<% if (user) { %>
-  <div class="right-end">
-    <h6>Logged in as: <%= user.email %>
-    <br/><br/>
-    <form action="/logout" method="POST">
-    <button type="submit" class="btn btn-primary" style="float: right;">Logout</button>
-    </form>
-    </h6>
+<div class="header">
+  <img src="https://i.pinimg.com/originals/87/9e/8a/879e8ab6f20297479615554c26efb80c.png" alt="Link from Zelda"><h1><a href="/">TinyApp: The Link Shortener</a></h1>
+  <div class="links">
+    <% if (user) { %>
+      <div class="header-logout">
+        <p>Logged in as: <%= user.email %></p>
+        <form action="/logout" method="POST">
+        <button type="submit" class="logout">Logout</button>
+        </form>
+        </h6>
+      </div>
+      <hr>
+    <% } else { %>
+      <h6><a href="/register">Sign Up</a></h6>
+      <h6><a href="/login">Login</a></h6>
+    <% } %>
   </div>
-  <hr>
-<% } else { %>
-  <div class="beside">
-    <h6><a href="/register">Sign Up</a></h6>
-    <h6><a href="/login">Login</a></h6>
-  </div>
-  <hr>
-<% } %>
+</div>

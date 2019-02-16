@@ -7,14 +7,16 @@
   <link href="https://fonts.googleapis.com/css?family=Work+Sans" rel="stylesheet">
   <title>Short URL | TinyApp</title>
 </head>
-<body style="font-size:20px; padding:50px;">
+<body>
   <% include ./partials/_header %>
   <h2><%= shortURL %></h2>
   <h6>(Link created on <%= createdOn %>. Visited <%= traffic %> times by <%= uniqueVisitors %> people.)</h6>
-  <form method="POST" action="/urls/<%= shortURL %>?_method=PUT" class="form-inline">
-    <input type="url" id="longURL" name="longURL" size="40" placeholder="<%= longURL %>"><br/>
-    <button type="submit" class="btn btn-primary">Update URL</button>
-  </form>
+  <div class="edit-link">
+    <form method="POST" action="/urls/<%= shortURL %>?_method=PUT" class="center">
+      <input type="url" id="longURL" name="longURL" placeholder="<%= longURL %>"><br/>
+      <button type="submit">Update URL</button>
+    </form>
+  </div>
   <h5><a href="/urls/new">🔗 Shorten More!</a> | <a href="/urls/">View All</a></h5>
 </body>
 </html>

@@ -1,9 +1,51 @@
 * {
   font-family: 'Work Sans', sans-serif;
+  text-align: center;
 }
 
 p {
   color: #494b4b;
+}
+
+input {
+  height: 20px;
+  width: 200px;
+  font-size: 16px;
+  margin-right: 10px;
+  text-align: left;
+}
+
+button {
+  font-weight: bold;
+  font-size: 16px;
+  padding: 12px 28px;
+  border-radius: 12px;
+  background-color: #d4ce46;
+  color: #494b4b;
+  transition: background-color 0.5s ease;
+  margin-left: 10px;
+}
+
+button:hover {
+  background-color: #4aba91;
+}
+
+form {
+  display: flex;
+  flex-direction: row;
+  align-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 10px;
+}
+
+label {
+  font-size: 14px;
+}
+
+ul {
+  list-style-type: none;
+  margin-left: 0px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -17,4 +59,83 @@ a, a:visited {
 
 a:hover {
   color: #4aba91;
+}
+
+.warning {
+  color: red;
+}
+
+.header-logout {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+}
+
+.header-logout button {
+  font-weight: bold;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 12px;
+  background-color: #d4ce46;
+  color: #494b4b;
+  transition: background-color 0.5s ease;
+  margin-left: 10px;
+}
+
+.header-logout button:hover {
+  background-color: #4aba91;
+}
+
+.index-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.index-buttons form {
+  display: block;
+  margin: 0px;
+}
+
+.edit-link input {
+  margin-bottom: 20px;
+}
+
+.center {
+  display: block;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.header h1 {
+  font-weight: bold;
+  font-size: 54px;
+  margin: 0px 0px 25px 0px;
+  text-align: center;
+}
+
+.header a {
+  text-decoration: none;
+}
+
+.header img {
+  max-height: 100px;
+}
+
+.header .links {
+  margin: 0 auto;
+  padding: 0px;
+  font-size: 34px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.header .links p {
+  font-size: 14px;
+}
+
+.header h6 {
+  margin: 0px;
 }
